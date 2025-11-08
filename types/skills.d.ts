@@ -27,10 +27,10 @@ type Props = {
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   handleDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
   handleDrop: (e: React.DragEvent<HTMLDivElement>) => void;
-  pendingUploads: any[];
-  setPendingUploads: (updater: any) => void;
-  uploadProgress: any[];
-  setUploadProgress: (updater: any) => void;
+  pendingUploads: PendingUpload[];
+  setPendingUploads: React.Dispatch<React.SetStateAction<PendingUpload[]>>;
+  uploadProgress: UploadProgress[];
+  setUploadProgress: React.Dispatch<React.SetStateAction<UploadProgress[]>>;
   isUploading: boolean;
   handleMultipleFileUpload: (files: File[]) => void;
   isSubmitting: boolean;

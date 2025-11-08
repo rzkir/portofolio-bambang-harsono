@@ -12,7 +12,7 @@ interface HomeContent {
   links: LinkItem[];
   name: string;
   text: string;
-  image?: string;
+  image: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

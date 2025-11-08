@@ -44,7 +44,7 @@ export default function FormModalSkills(props: Props) {
                     <div className="space-y-4 sm:space-y-6">
                         <div
                             ref={dropZoneRef}
-                            className={`relative w-full aspect-[4/3] border-2 border-dashed rounded-xl transition-colors ${isDragging ? 'border-primary bg-primary/5' : 'border-border'}`}
+                            className={`relative w-full aspect-4/3 border-2 border-dashed rounded-xl transition-colors ${isDragging ? 'border-primary bg-primary/5' : 'border-border'}`}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
@@ -66,8 +66,8 @@ export default function FormModalSkills(props: Props) {
                                                             variant="destructive"
                                                             size="sm"
                                                             onClick={() => {
-                                                                setPendingUploads((prev: any[]) => prev.filter((_: any, i: number) => i !== index));
-                                                                setUploadProgress((prev: any[]) => prev.filter((_: any, i: number) => i !== index));
+                                                                setPendingUploads((prev) => prev.filter((_, i) => i !== index));
+                                                                setUploadProgress((prev) => prev.filter((_, i) => i !== index));
                                                             }}
                                                         >
                                                             Remove
@@ -116,7 +116,7 @@ export default function FormModalSkills(props: Props) {
 
                         {uploadProgress.length > 0 && (
                             <div className="space-y-2 max-h-[120px] sm:max-h-40 overflow-y-auto">
-                                {uploadProgress.map((item: any, index: number) => (
+                                {uploadProgress.map((item: UploadProgress, index: number) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <div className="flex-1">
                                             <div className="text-sm font-medium">{item.fileName}</div>
@@ -137,7 +137,7 @@ export default function FormModalSkills(props: Props) {
 
                         {pendingUploads.length > 0 && (
                             <div className="space-y-2 max-h-[120px] sm:max-h-40 overflow-y-auto">
-                                {pendingUploads.map((upload: any, index: number) => (
+                                {pendingUploads.map((upload: PendingUpload, index: number) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <Input
                                             value={upload.title}
@@ -166,4 +166,5 @@ export default function FormModalSkills(props: Props) {
         </Dialog>
     )
 }
+
 

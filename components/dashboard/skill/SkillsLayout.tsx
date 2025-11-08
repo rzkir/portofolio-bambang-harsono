@@ -60,7 +60,7 @@ export default function SkillsLayout() {
                 <div className='flex flex-col gap-4 p-4 sm:p-8 border rounded-2xl border-border bg-card shadow-sm'>
                     <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
                         <div className='flex flex-col gap-4'>
-                            <h3 className='text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent'>
+                            <h3 className='text-3xl sm:text-4xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent'>
                                 Skills
                             </h3>
 
@@ -142,7 +142,7 @@ export default function SkillsLayout() {
                         currentSkills.map((skill) => (
                             <div key={skill._id} className="p-4 sm:p-6 border rounded-xl bg-card shadow-sm hover:shadow-md transition-all">
                                 <div className="flex flex-col gap-4 sm:gap-6">
-                                    <div className="relative w-full aspect-[4/3] flex-shrink-0">
+                                    <div className="relative w-full aspect-4/3 shrink-0">
                                         {skill.imageUrl ? (
                                             <Image
                                                 src={skill.imageUrl}
