@@ -16,6 +16,7 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  IconBrandHackerrank,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -69,6 +70,11 @@ const data = {
           url: "/dashboard/projects/frameworks",
         },
       ],
+    },
+    {
+      title: "Skills",
+      url: "/dashboard/skills",
+      icon: IconBrandHackerrank,
     },
     {
       title: "Contacts",

@@ -1,5 +1,7 @@
 "use client"
 
+import React from 'react'
+
 import { Button } from '@/components/ui/button'
 
 import { ChevronRight } from "lucide-react"
@@ -19,44 +21,43 @@ import {
 
 import { Pagination } from '@/hooks/pagination'
 
-import useStateFrameworks from '@/components/dashboard/projects/Framework/lib/useStateFrameworks'
+import { useStateSkills } from '@/components/dashboard/skill/lib/useStateSkills'
 
-export default function FrameworkLayout() {
+export default function SkillsLayout() {
     const {
-        frameworks,
-        isEditing,
-        isUploading,
-        isDialogOpen,
-        isDeleteDialogOpen,
-        deleteId,
-        fileInputRef,
-        formData,
+        skills,
         isLoading,
-        isDeleting,
-        isSubmitting,
-        currentPage,
-        pendingUploads,
-        uploadProgress,
-        isDragging,
-        dropZoneRef,
+        currentSkills,
         totalPages,
-        currentFrameworks,
-        setIsEditing,
-        setIsDialogOpen,
-        setIsDeleteDialogOpen,
-        setDeleteId,
+        currentPage,
         setCurrentPage,
-        setPendingUploads,
-        setUploadProgress,
+        isDialogOpen,
+        setIsDialogOpen,
+        isEditing,
+        setIsEditing,
+        handleEdit,
+        openDeleteDialog,
+        isDeleteDialogOpen,
+        setIsDeleteDialogOpen,
+        deleteId,
+        setDeleteId,
+        isDeleting,
+        handleDelete,
+        isSubmitting,
+        handleSubmit,
+        dropZoneRef,
+        fileInputRef,
+        isDragging,
         handleDragOver,
         handleDragLeave,
         handleDrop,
+        pendingUploads,
+        setPendingUploads,
+        uploadProgress,
+        setUploadProgress,
+        isUploading,
         handleMultipleFileUpload,
-        handleSubmit,
-        handleDelete,
-        handleEdit,
-        openDeleteDialog,
-    } = useStateFrameworks();
+    } = useStateSkills();
 
     return (
         <section className="p-4 sm:p-8 bg-muted/30 rounded-2xl">
@@ -65,8 +66,8 @@ export default function FrameworkLayout() {
                 <div className='flex flex-col gap-4 p-4 sm:p-8 border rounded-2xl border-border bg-card shadow-sm'>
                     <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
                         <div className='flex flex-col gap-4'>
-                            <h3 className='text-3xl sm:text-4xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent'>
-                                Framework
+                            <h3 className='text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent'>
+                                Skills
                             </h3>
 
                             <ol className='flex flex-wrap gap-2 items-center text-sm text-muted-foreground'>
@@ -74,8 +75,12 @@ export default function FrameworkLayout() {
                                     <span>Dashboard</span>
                                     <ChevronRight className="w-4 h-4 mx-1 text-muted-foreground" />
                                 </li>
+                                <li className='flex items-center hover:text-primary transition-colors'>
+                                    <span>Pages</span>
+                                    <ChevronRight className="w-4 h-4 mx-1 text-muted-foreground" />
+                                </li>
                                 <li className='flex items-center text-primary font-medium'>
-                                    <span>Framework</span>
+                                    <span>Skills</span>
                                 </li>
                             </ol>
                         </div>
@@ -87,6 +92,7 @@ export default function FrameworkLayout() {
                                 setIsEditing(false);
                                 setIsDialogOpen(true);
                             }}
+
                         >
                             Create Content
                         </Button>
@@ -94,7 +100,7 @@ export default function FrameworkLayout() {
                 </div>
 
                 {/* Content Section */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {isLoading ? (
                         Array.from({ length: 3 }).map((_, index) => (
                             <div key={index} className="p-4 sm:p-6 border rounded-xl bg-card shadow-sm">
@@ -114,7 +120,7 @@ export default function FrameworkLayout() {
                                 </div>
                             </div>
                         ))
-                    ) : frameworks.length === 0 ? (
+                    ) : skills.length === 0 ? (
                         <div className="col-span-full p-8 text-center border rounded-xl bg-card shadow-sm">
                             <div className="flex flex-col items-center gap-4">
                                 <svg
@@ -134,19 +140,19 @@ export default function FrameworkLayout() {
                                     <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
                                     <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
                                 </svg>
-                                <h3 className="text-xl font-semibold text-muted-foreground mb-2">No Frameworks Found</h3>
-                                <p className="text-muted-foreground">Start by creating your first framework using the &quot;Create Content&quot; button above.</p>
+                                <h3 className="text-xl font-semibold text-muted-foreground mb-2">No Skills Found</h3>
+                                <p className="text-muted-foreground">Start by creating your first skill using the &quot;Create Content&quot; button above.</p>
                             </div>
                         </div>
                     ) : (
-                        currentFrameworks.map((framework) => (
-                            <div key={framework._id} className="p-4 sm:p-6 border rounded-xl bg-card shadow-sm hover:shadow-md transition-all">
+                        currentSkills.map((skill) => (
+                            <div key={skill._id} className="p-4 sm:p-6 border rounded-xl bg-card shadow-sm hover:shadow-md transition-all">
                                 <div className="flex flex-col gap-4 sm:gap-6">
-                                    <div className="relative w-full aspect-4/3 shrink-0">
-                                        {framework.imageUrl ? (
+                                    <div className="relative w-full aspect-[4/3] flex-shrink-0">
+                                        {skill.imageUrl ? (
                                             <Image
-                                                src={framework.imageUrl}
-                                                alt={framework.title}
+                                                src={skill.imageUrl}
+                                                alt={skill.title}
                                                 fill
                                                 className="object-cover rounded-xl shadow-sm"
                                             />
@@ -159,14 +165,14 @@ export default function FrameworkLayout() {
                                     <div className="flex-1">
                                         <div className="flex flex-col justify-between items-start gap-4">
                                             <div className="space-y-2 w-full">
-                                                <h4 className="text-lg sm:text-xl font-bold">{framework.title}</h4>
+                                                <h4 className="text-lg sm:text-xl font-bold">{skill.title}</h4>
                                             </div>
                                             <div className="flex gap-3 w-full">
                                                 <Button
                                                     variant="outline"
                                                     size="lg"
                                                     onClick={() => {
-                                                        handleEdit(framework);
+                                                        handleEdit(skill);
                                                         setIsDialogOpen(true);
                                                     }}
                                                     className="flex-1"
@@ -176,7 +182,7 @@ export default function FrameworkLayout() {
                                                 <Button
                                                     variant="destructive"
                                                     size="lg"
-                                                    onClick={() => framework._id && openDeleteDialog(framework._id)}
+                                                    onClick={() => skill._id && openDeleteDialog(skill._id)}
                                                     className="flex-1"
                                                 >
                                                     Delete
@@ -191,7 +197,7 @@ export default function FrameworkLayout() {
                 </div>
 
                 {/* Pagination Section */}
-                {!isLoading && frameworks.length > 0 && (
+                {!isLoading && skills.length > 0 && (
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -203,13 +209,13 @@ export default function FrameworkLayout() {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-[600px] p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
                     <DialogHeader className="mb-4 sm:mb-6">
-                        <DialogTitle className="text-xl sm:text-2xl font-bold">{isEditing ? 'Edit Framework' : 'Create Framework'}</DialogTitle>
+                        <DialogTitle className="text-xl sm:text-2xl font-bold">{isEditing ? 'Edit Skill' : 'Create Skill'}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                         <div className="space-y-4 sm:space-y-6">
                             <div
                                 ref={dropZoneRef}
-                                className={`relative w-full aspect-4/3 border-2 border-dashed rounded-xl transition-colors ${isDragging ? 'border-primary bg-primary/5' : 'border-border'
+                                className={`relative w-full aspect-[4/3] border-2 border-dashed rounded-xl transition-colors ${isDragging ? 'border-primary bg-primary/5' : 'border-border'
                                     }`}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
@@ -233,7 +239,7 @@ export default function FrameworkLayout() {
                                                                 size="sm"
                                                                 onClick={() => {
                                                                     setPendingUploads(prev => prev.filter((_, i) => i !== index));
-                                                                    setUploadProgress(prev => prev.filter((_, i) => i !== index));
+                                                                    setUploadProgress((prev: UploadProgress[]) => prev.filter((_: UploadProgress, i: number) => i !== index));
                                                                 }}
                                                             >
                                                                 Remove
@@ -256,10 +262,12 @@ export default function FrameworkLayout() {
                                                 if (isEditing) {
                                                     if (e.target.files?.[0]) {
                                                         handleMultipleFileUpload([e.target.files[0]]);
+
                                                     }
                                                 } else {
                                                     if (e.target.files) {
                                                         handleMultipleFileUpload(Array.from(e.target.files));
+
                                                     }
                                                 }
                                             }}
@@ -318,7 +326,7 @@ export default function FrameworkLayout() {
                                                     setPendingUploads(newUploads);
                                                 }}
                                                 className="h-10"
-                                                placeholder="Enter framework title"
+                                                placeholder="Enter skill title"
                                             />
                                         </div>
                                     ))}
@@ -342,7 +350,7 @@ export default function FrameworkLayout() {
                         <DialogTitle className="text-lg sm:text-xl font-bold">Confirm Delete</DialogTitle>
                     </DialogHeader>
                     <div className="py-4">
-                        <p className="text-muted-foreground">Are you sure you want to delete this framework?</p>
+                        <p className="text-muted-foreground">Are you sure you want to delete this skill?</p>
                     </div>
                     <div className="flex justify-end gap-3">
                         <Button

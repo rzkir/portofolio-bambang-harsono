@@ -119,9 +119,10 @@ export default function QuillEditor({
     }, []);
 
     return (
-        <div className={`min-h-[700px] border rounded-lg overflow-hidden ${className}`}>
+        <div className={`min-h-full border rounded-lg overflow-hidden ${className}`}>
             <ReactQuill
                 theme="snow"
+                className="sticky top-0"
                 value={value}
                 onChange={onChange}
                 modules={modules}

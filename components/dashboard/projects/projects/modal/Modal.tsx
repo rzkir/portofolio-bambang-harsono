@@ -52,6 +52,7 @@ export default function Modal({
 }: ModalProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [isUploadingImages, setIsUploadingImages] = useState(false);
+    const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -88,7 +89,7 @@ export default function Modal({
         const file = e.target.files?.[0];
         if (!file) return;
 
-        setIsUploadingImages(true);
+        setIsUploadingThumbnail(true);
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -111,7 +112,9 @@ export default function Modal({
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'Failed to upload thumbnail');
         } finally {
-            setIsUploadingImages(false);
+            setIsUploadingThumbnail(false);
+            // Allow re-selecting the same file by clearing the input value
+            if (e.target) e.target.value = '';
         }
     };
 
@@ -205,6 +208,8 @@ export default function Modal({
             toast.error(error instanceof Error ? error.message : 'Failed to upload images');
         } finally {
             setIsUploadingImages(false);
+            // Clear input so selecting the same file again triggers onChange
+            if (e.target) e.target.value = '';
         }
     };
 
@@ -360,44 +365,6 @@ export default function Modal({
 
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
-                                <Code className="w-5 h-5 text-primary" />
-                                <h3>Content Details</h3>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="description" className="text-sm font-medium flex items-center gap-2">
-                                        <FileText className="w-4 h-4 text-muted-foreground" />
-                                        Description
-                                    </Label>
-                                    <Textarea
-                                        id="description"
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        placeholder="Enter content description"
-                                        required
-                                        className="min-h-[100px] transition-colors focus:ring-2 focus:ring-primary/20"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="content" className="text-sm font-medium flex items-center gap-2">
-                                        <Code className="w-4 h-4 text-muted-foreground" />
-                                        Content
-                                    </Label>
-                                    <QuillEditor
-                                        value={formData.content}
-                                        onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                                        placeholder="Enter content details"
-                                        height="200px"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
                                 <List className="w-5 h-5 text-primary" />
                                 <h3>Frameworks</h3>
                             </div>
@@ -464,170 +431,71 @@ export default function Modal({
                                 </div>
                             )}
                         </div>
-                    </div>
 
-                    {/* Right Column - Media */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
-                                <ImageIcon className="w-5 h-5 text-primary" />
-                                <h3>Thumbnail</h3>
-                            </div>
-
-                            <div className="space-y-2">
-                                {formData.thumbnail ? (
-                                    <div className="relative group">
-                                        <div className="border rounded-lg overflow-hidden">
-                                            <Image
-                                                src={formData.thumbnail}
-                                                alt="Thumbnail preview"
-                                                className="w-full h-48 object-contain"
-                                                width={100}
-                                                height={100}
-                                            />
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={handleRemoveThumbnail}
-                                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                ) : (
-                                    <div
-                                        className={cn(
-                                            "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
-                                            isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
-                                            "relative"
-                                        )}
-                                        onDragOver={handleDragOver}
-                                        onDragLeave={handleDragLeave}
-                                        onDrop={(e) => handleDrop(e, 0)}
-                                    >
-                                        <Input
-                                            id="thumbnail"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleThumbnailUpload}
-                                            className="hidden"
-                                        />
-                                        <div className="flex flex-col items-center gap-2">
-                                            <Upload className="w-8 h-8 text-muted-foreground" />
-                                            <div className="text-sm text-muted-foreground">
-                                                <p>Drag and drop your thumbnail here, or</p>
-                                                <Button
-                                                    type="button"
-                                                    variant="link"
-                                                    onClick={() => document.getElementById('thumbnail')?.click()}
-                                                    disabled={isUploadingImages}
-                                                    className="text-primary hover:text-primary/80"
-                                                >
-                                                    browse
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Additional Images Section */}
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
-                                <ImageIcon className="w-5 h-5 text-primary" />
-                                <h3>Additional Images</h3>
-                            </div>
-
+                        {/* Right Column - Media */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-4">
-                                {/* Image Grid */}
-                                {formData.imageUrl.length > 0 && (
-                                    <div className="max-h-[400px] overflow-y-auto pr-2">
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                            {formData.imageUrl.map((url, index) => (
-                                                <div
-                                                    key={url}
-                                                    draggable
-                                                    onDragStart={() => handleDragStart(index)}
-                                                    onDragOver={handleDragOver}
-                                                    onDragLeave={handleDragLeave}
-                                                    onDrop={(e) => handleDrop(e, index)}
-                                                    className={cn(
-                                                        "relative group cursor-move",
-                                                        isDragging && "opacity-50"
-                                                    )}
-                                                >
-                                                    <div className="border rounded-lg overflow-hidden">
-                                                        <Image
-                                                            src={url}
-                                                            alt={`Project image ${index + 1}`}
-                                                            className="w-full h-40 object-cover"
-                                                            width={100}
-                                                            height={100}
-                                                            onError={(e) => {
-                                                                const target = e.target as HTMLImageElement;
-                                                                target.src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
-                                                            }}
-                                                        />
-                                                    </div>
+                                <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
+                                    <ImageIcon className="w-5 h-5 text-primary" />
+                                    <h3>Thumbnail</h3>
+                                </div>
+
+                                <div className="space-y-2">
+                                    {formData.thumbnail ? (
+                                        <div className="relative group">
+                                            <div className="border rounded-lg overflow-hidden">
+                                                <Image
+                                                    src={formData.thumbnail}
+                                                    alt="Thumbnail preview"
+                                                    className="w-full h-48 object-contain"
+                                                    width={100}
+                                                    height={100}
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={handleRemoveThumbnail}
+                                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className={cn(
+                                                "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
+                                                isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
+                                                "relative"
+                                            )}
+                                            onDragOver={handleDragOver}
+                                            onDragLeave={handleDragLeave}
+                                            onDrop={(e) => handleDrop(e, 0)}
+                                        >
+                                            <Input
+                                                id="thumbnail"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleThumbnailUpload}
+                                                className="hidden"
+                                            />
+                                            <div className="flex flex-col items-center gap-2">
+                                                <Upload className="w-8 h-8 text-muted-foreground" />
+                                                <div className="text-sm text-muted-foreground">
+                                                    <p>Drag and drop your thumbnail here, or</p>
                                                     <Button
                                                         type="button"
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        onClick={() => handleRemoveImage(index)}
-                                                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                                                        variant="link"
+                                                        onClick={() => document.getElementById('thumbnail')?.click()}
+                                                        disabled={isUploadingThumbnail}
+                                                        className="text-primary hover:text-primary/80"
                                                     >
-                                                        <X className="w-4 h-4" />
+                                                        browse
                                                     </Button>
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <div className="text-white text-sm font-medium">
-                                                            Drag to reorder
-                                                        </div>
-                                                    </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Upload Button - Only show when no images */}
-                                {formData.imageUrl.length === 0 && (
-                                    <div
-                                        className={cn(
-                                            "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
-                                            isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
-                                            "relative"
-                                        )}
-                                        onDragOver={handleDragOver}
-                                        onDragLeave={handleDragLeave}
-                                        onDrop={handleAdditionalImagesDrop}
-                                    >
-                                        <Input
-                                            id="images"
-                                            type="file"
-                                            accept="image/*"
-                                            multiple
-                                            onChange={handleImageUpload}
-                                            className="hidden"
-                                            disabled={isUploadingImages}
-                                        />
-                                        <div className="flex flex-col items-center gap-2">
-                                            <Upload className="w-8 h-8 text-muted-foreground" />
-                                            <div className="text-sm text-muted-foreground">
-                                                <p>Drag and drop your images here, or</p>
-                                                <Button
-                                                    type="button"
-                                                    variant="link"
-                                                    onClick={() => document.getElementById('images')?.click()}
-                                                    disabled={isUploadingImages}
-                                                    className="text-primary hover:text-primary/80"
-                                                >
-                                                    Select Files
-                                                </Button>
                                             </div>
-                                            {isUploadingImages && (
+                                            {isUploadingThumbnail && (
                                                 <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
                                                     <div className="flex items-center gap-2">
                                                         <svg className="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -639,8 +507,171 @@ export default function Modal({
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Additional Images Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
+                                    <ImageIcon className="w-5 h-5 text-primary" />
+                                    <h3>Additional Images</h3>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {/* Persistent hidden file input to allow adding images anytime */}
+                                    <Input
+                                        id="images"
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                        disabled={isUploadingImages}
+                                    />
+
+                                    {/* Toolbar to add more images when some already exist */}
+                                    {formData.imageUrl.length > 0 && (
+                                        <div className="flex justify-end">
+                                            <Button
+                                                type="button"
+                                                variant="link"
+                                                onClick={() => document.getElementById('images')?.click()}
+                                                disabled={isUploadingImages}
+                                                className="text-primary hover:text-primary/80 px-0"
+                                            >
+                                                Add Images
+                                            </Button>
+                                        </div>
+                                    )}
+                                    {/* Image Grid */}
+                                    {formData.imageUrl.length > 0 && (
+                                        <div className="max-h-[400px] overflow-y-auto pr-2">
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                                {formData.imageUrl.map((url, index) => (
+                                                    <div
+                                                        key={url}
+                                                        draggable
+                                                        onDragStart={() => handleDragStart(index)}
+                                                        onDragOver={handleDragOver}
+                                                        onDragLeave={handleDragLeave}
+                                                        onDrop={(e) => handleDrop(e, index)}
+                                                        className={cn(
+                                                            "relative group cursor-move",
+                                                            isDragging && "opacity-50"
+                                                        )}
+                                                    >
+                                                        <div className="border rounded-lg overflow-hidden">
+                                                            <Image
+                                                                src={url}
+                                                                alt={`Project image ${index + 1}`}
+                                                                className="w-full h-40 object-cover"
+                                                                width={100}
+                                                                height={100}
+                                                                onError={(e) => {
+                                                                    const target = e.target as HTMLImageElement;
+                                                                    target.src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            onClick={() => handleRemoveImage(index)}
+                                                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </Button>
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <div className="text-white text-sm font-medium">
+                                                                Drag to reorder
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Upload Button - Only show when no images */}
+                                    {formData.imageUrl.length === 0 && (
+                                        <div
+                                            className={cn(
+                                                "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
+                                                isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
+                                                "relative"
+                                            )}
+                                            onDragOver={handleDragOver}
+                                            onDragLeave={handleDragLeave}
+                                            onDrop={handleAdditionalImagesDrop}
+                                        >
+                                            <div className="flex flex-col items-center gap-2">
+                                                <Upload className="w-8 h-8 text-muted-foreground" />
+                                                <div className="text-sm text-muted-foreground">
+                                                    <p>Drag and drop your images here, or</p>
+                                                    <Button
+                                                        type="button"
+                                                        variant="link"
+                                                        onClick={() => document.getElementById('images')?.click()}
+                                                        disabled={isUploadingImages}
+                                                        className="text-primary hover:text-primary/80"
+                                                    >
+                                                        Select Files
+                                                    </Button>
+                                                </div>
+                                                {isUploadingImages && (
+                                                    <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                                                        <div className="flex items-center gap-2">
+                                                            <svg className="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                            <span>Uploading...</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 text-lg font-semibold border-b pb-2">
+                                <Code className="w-5 h-5 text-primary" />
+                                <h3>Content Details</h3>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="description" className="text-sm font-medium flex items-center gap-2">
+                                        <FileText className="w-4 h-4 text-muted-foreground" />
+                                        Description
+                                    </Label>
+                                    <Textarea
+                                        id="description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleChange}
+                                        placeholder="Enter content description"
+                                        required
+                                        className="min-h-[100px] transition-colors focus:ring-2 focus:ring-primary/20"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="content" className="text-sm font-medium flex items-center gap-2">
+                                        <Code className="w-4 h-4 text-muted-foreground" />
+                                        Content
+                                    </Label>
+                                    <QuillEditor
+                                        value={formData.content}
+                                        onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                                        placeholder="Enter content details"
+                                        height="200px"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -648,7 +679,7 @@ export default function Modal({
                     <DialogFooter className="border-t pt-4 mt-6">
                         <Button
                             type="submit"
-                            disabled={isUploadingImages || isSubmitting}
+                            disabled={isUploadingImages || isUploadingThumbnail || isSubmitting}
                             className="w-full sm:w-auto hover:scale-105 transition-all duration-300"
                         >
                             {isSubmitting ? `${isEditing ? 'Updating' : 'Creating'}...` : `${isEditing ? 'Update' : 'Create'} Content`}

@@ -1,0 +1,15 @@
+
+import React from 'react'
+
+export const metadata = {
+    title: "Skills | Bambang Harsono",
+    description: "Modern dashboard for project management",
+}
+
+import SkillsLayout from '@/components/dashboard/skill/SkillsLayout'
+
+export default function page() {
+    return (
+        <SkillsLayout />
+    )
+}

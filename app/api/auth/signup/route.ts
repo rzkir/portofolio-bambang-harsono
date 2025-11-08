@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       password,
       firstName,
       lastName,
-      role: role || "user",
+      role: role,
     });
 
     await account.save();
