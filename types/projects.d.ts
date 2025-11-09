@@ -18,7 +18,7 @@ interface projects {
   updatedAt?: Date;
 }
 
-// Delete Modal
+//================== Delete Modal ==================//
 
 interface DeleteProps {
   isOpen: boolean;
@@ -27,7 +27,7 @@ interface DeleteProps {
   isDeleting: boolean;
 }
 
-// form
+//================== Form Modal ==================//
 
 interface ModalProps {
   isOpen: boolean;
@@ -42,9 +42,38 @@ interface ModalProps {
   isSubmitting: boolean;
 }
 
-// view
+//================== View Modal ==================//
 interface ViewProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   selectedProject: projects | null;
+}
+
+//================== Projects Details ==================//
+
+interface RelatedProject {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: string;
+  thumbnail: string;
+  previewLink: string;
+}
+
+interface ProjectDetails {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  content: string;
+  category: string;
+  thumbnail: string;
+  imageUrl: string[];
+  previewLink: string;
+  frameworks: Framework[];
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+  relatedProjects: RelatedProject[];
 }

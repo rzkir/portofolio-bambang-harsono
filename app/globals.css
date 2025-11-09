@@ -129,3 +129,186 @@
     max-width: 1440px;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom styles for article content */
+.prose .ql-code-block-container {
+  @apply bg-muted border border-border rounded-lg p-4 my-4 overflow-x-auto;
+}
+
+.prose .ql-code-block {
+  @apply font-mono text-sm text-foreground bg-transparent p-0 m-0;
+  white-space: pre;
+}
+
+.prose .ql-ui {
+  @apply hidden;
+}
+
+.prose li[data-list="ordered"] {
+  @apply list-decimal ml-6;
+}
+
+.prose li[data-list="bullet"] {
+  @apply list-disc ml-6;
+}
+
+.prose li[data-list="ordered"]:before,
+.prose li[data-list="bullet"]:before {
+  @apply hidden;
+}
+
+/* Enhanced blockquote styling */
+.prose blockquote {
+  @apply border-l-4 border-l-primary bg-muted/30 pl-6 py-4 rounded-r-lg my-6 italic text-muted-foreground;
+}
+
+/* Code block enhancements */
+.prose pre {
+  @apply bg-muted border border-border rounded-lg p-4 overflow-x-auto;
+}
+
+.prose code {
+  @apply text-primary bg-muted px-2 py-1 rounded text-sm font-mono;
+}
+
+/* List styling improvements */
+.prose ol,
+.prose ul {
+  @apply my-4;
+}
+
+.prose li {
+  @apply my-4 text-muted-foreground leading-relaxed;
+}
+
+/* Heading improvements */
+.prose h1 {
+  @apply text-4xl mb-6 mt-8 border-b border-border pb-3 font-bold text-foreground;
+}
+
+.prose h2 {
+  @apply text-3xl mb-4 mt-8 text-primary font-bold;
+}
+
+.prose h3 {
+  @apply text-2xl mb-3 mt-6 font-bold text-foreground;
+}
+
+.prose h4 {
+  @apply text-xl mb-2 mt-4 font-bold text-foreground;
+}
+
+/* Paragraph styling */
+.prose p {
+  @apply text-muted-foreground leading-relaxed text-base mb-4;
+}
+
+/* Handle empty paragraphs - completely hide them */
+.prose p:empty {
+  @apply hidden;
+}
+
+/* Handle paragraphs with only whitespace */
+.prose p:is(:empty, :has(br:only-child)) {
+  @apply hidden;
+}
+
+/* Handle paragraphs with only whitespace characters */
+.prose p:has(span:empty) {
+  @apply hidden;
+}
+
+/* Handle paragraphs that contain only non-breaking spaces or other whitespace */
+.prose p:has(span:only-child:empty) {
+  @apply hidden;
+}
+
+/* Handle paragraphs with only &nbsp; or other invisible characters */
+.prose p:has(span:only-child:is(:empty, [data-text=""])) {
+  @apply hidden;
+}
+
+/* Handle paragraphs with only formatting elements but no content */
+.prose p:has(strong:empty, em:empty, span:empty) {
+  @apply hidden;
+}
+
+/* Handle paragraphs that appear empty due to only containing whitespace */
+.prose p:not(:has(*)):is(:empty, [data-empty="true"]) {
+  @apply hidden;
+}
+
+/* Handle paragraphs with only invisible content */
+.prose p:has(span[style*="display: none"], span[style*="visibility: hidden"]) {
+  @apply hidden;
+}
+
+/* Handle paragraphs with only <br> tags */
+.prose p br:only-child {
+  @apply block;
+}
+
+/* Handle paragraphs that contain only spans with styling */
+.prose p:has(span:only-child) {
+  @apply mb-4;
+}
+
+/* Handle paragraphs with inline styling spans */
+.prose p span[style*="background-color"] {
+  @apply px-2 py-1 rounded;
+}
+
+/* Handle paragraphs with inline code-like styling */
+.prose p span[style*="background-color: rgb(68, 68, 68)"] {
+  @apply bg-muted text-foreground px-2 py-1 rounded font-mono text-sm;
+}
+
+/* Remove excessive spacing between consecutive paragraphs */
+.prose p + p {
+  @apply mt-0;
+}
+
+/* Special handling for paragraphs after headings */
+.prose h1 + p,
+.prose h2 + p,
+.prose h3 + p,
+.prose h4 + p {
+  @apply mt-2;
+}
+
+/* Link styling */
+.prose a {
+  @apply text-primary no-underline font-medium hover:underline;
+}
+
+/* Strong text */
+.prose strong {
+  @apply text-foreground font-semibold;
+}
+
+/* Image styling */
+.prose img {
+  @apply rounded-lg shadow-lg my-6;
+}
+
+/* Table styling */
+.prose table {
+  @apply border-collapse border border-border rounded-lg overflow-hidden my-6;
+}
+
+.prose th {
+  @apply bg-muted border border-border px-4 py-2 font-semibold text-foreground;
+}
+
+.prose td {
+  @apply border border-border px-4 py-2 text-muted-foreground;
+}
+
+/* Horizontal rule */
+.prose hr {
+  @apply border-border my-8;
+}

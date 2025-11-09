@@ -16,6 +16,8 @@ import Projects from '@/components/content/projects/Projects';
 
 import Achviement from '@/components/content/achvievement/Achviement';
 
+import Contact from '@/components/content/contact/Contact';
+
 export default async function HomePage() {
   const homeData = await fetchHomeContents();
   const techSkillData = await fetchTechSkillsContents();
@@ -29,6 +31,7 @@ export default async function HomePage() {
       <Skills techSkillsData={techSkillData} skillsData={skillData} />
       <Achviement achievementData={achievementData} />
       <Projects projectsData={projectData} />
+      <Contact />
     </Fragment>
   );
 }

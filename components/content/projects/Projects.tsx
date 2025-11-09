@@ -7,12 +7,13 @@ import Link from 'next/link'
 import { IconCode, IconArrowElbowRight } from "@tabler/icons-react"
 
 import { Button } from '@/components/ui/button'
+
 import { motion } from 'framer-motion'
 
 export default function Projects({ projectsData }: { projectsData: projects[] }) {
 
     return (
-        <section className='py-5 md:py-10 xl:py-20'>
+        <section className='py-5 md:py-10 xl:py-20' id='projects'>
             <div className="container space-y-10 xl:space-y-10 px-4 xl:px-10">
                 <div className='flex flex-col gap-2 items-end justify-end'>
                     <motion.h3
