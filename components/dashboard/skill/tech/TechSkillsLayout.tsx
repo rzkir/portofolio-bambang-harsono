@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'
 
 import { ChevronRight } from "lucide-react"
 
-import FormModalSkills from '@/components/dashboard/skill/modal/FormModalSkills'
-import DeleteModalSkills from '@/components/dashboard/skill/modal/DeleteModalSkills'
+import FormModalSkills from '@/components/dashboard/skill/tech/modal/FormModalTechSkills'
+
+import DeleteModalSkills from '@/components/dashboard/skill/tech/modal/DeleteModalTechSkills'
 
 import Image from 'next/image'
 
@@ -15,7 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 import { Pagination } from '@/hooks/pagination'
 
-import { useStateSkills } from '@/components/dashboard/skill/lib/useStateSkills'
+import { useStateSkills } from '@/components/dashboard/skill/tech/lib/useStateTechSkills'
 
 export default function SkillsLayout() {
     const {

@@ -2,12 +2,27 @@ import mongoose from "mongoose";
 
 const skillSchema = new mongoose.Schema(
   {
-    imageUrl: {
+    title: {
       type: String,
       required: true,
     },
-    title: {
+    text: {
       type: String,
+      required: true,
+    },
+    skills: {
+      type: [
+        {
+          title: {
+            type: String,
+            required: true,
+          },
+          description: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
       required: true,
     },
   },
@@ -16,8 +31,10 @@ const skillSchema = new mongoose.Schema(
   }
 );
 
-const Skill =
-  mongoose.models.Skill ||
-  mongoose.model(process.env.NEXT_PUBLIC_SKILL as string, skillSchema);
+const modelName = process.env.NEXT_PUBLIC_SKILL as string;
 
-export default Skill;
+if (mongoose.models[modelName]) {
+  delete mongoose.models[modelName];
+}
+
+export const Skill = mongoose.model(modelName, skillSchema);

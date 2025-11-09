@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { Skill } from "@/models/Skill";
-
 import { connectToDatabase } from "@/utils/mongodb/mongodb";
+
+import TechSkill from "@/models/TechSkill";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -13,76 +13,83 @@ export async function GET(request: Request) {
 
   try {
     await connectToDatabase();
-    const contents = await Skill.find().sort({ createdAt: -1 });
-    return NextResponse.json(contents);
+    const techSkills = await TechSkill.find().sort({ createdAt: -1 });
+    return NextResponse.json(techSkills);
   } catch {
     return NextResponse.json(
-      { error: "Failed to fetch contents" },
+      { error: "Failed to fetch tech skills" },
       { status: 500 }
     );
   }
 }
 
-// POST new home content
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
     const body = await request.json();
-    const content = await Skill.create(body);
-    return NextResponse.json(content, { status: 201 });
+
+    const techSkill = new TechSkill(body);
+    await techSkill.save();
+
+    return NextResponse.json(techSkill);
   } catch {
     return NextResponse.json(
-      { error: "Failed to create content" },
+      { error: "Failed to create tech skill" },
       { status: 500 }
     );
   }
 }
 
-// PUT update home content
 export async function PUT(request: Request) {
   try {
     await connectToDatabase();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
     const body = await request.json();
-    const { id, ...updateData } = body;
 
-    const content = await Skill.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const techSkill = await TechSkill.findByIdAndUpdate(
+      id,
+      { $set: body },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-    if (!content) {
-      return NextResponse.json({ error: "Content not found" }, { status: 404 });
+    if (!techSkill) {
+      return NextResponse.json(
+        { error: "Tech skill not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(content);
+    return NextResponse.json(techSkill);
   } catch {
     return NextResponse.json(
-      { error: "Failed to update content" },
+      { error: "Failed to update tech skill" },
       { status: 500 }
     );
   }
 }
 
-// DELETE home content
 export async function DELETE(request: Request) {
   try {
     await connectToDatabase();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    if (!id) {
-      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    const techSkill = await TechSkill.findByIdAndDelete(id);
+    if (!techSkill) {
+      return NextResponse.json(
+        { error: "Tech skill not found" },
+        { status: 404 }
+      );
     }
 
-    const content = await Skill.findByIdAndDelete(id);
-
-    if (!content) {
-      return NextResponse.json({ error: "Content not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ message: "Content deleted successfully" });
+    return NextResponse.json({ message: "Tech skill deleted successfully" });
   } catch {
     return NextResponse.json(
-      { error: "Failed to delete content" },
+      { error: "Failed to delete tech skill" },
       { status: 500 }
     );
   }

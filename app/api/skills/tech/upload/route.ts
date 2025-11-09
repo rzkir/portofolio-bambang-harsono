@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       url: uploadResponse.url,
       fileId: uploadResponse.fileId,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to upload skill image" },
       { status: 500 }

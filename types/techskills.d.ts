@@ -1,4 +1,4 @@
-interface Skill {
+interface TechSkill {
   _id?: string;
   imageUrl: string;
   title: string;

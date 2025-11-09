@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export function useStateSkills() {
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const [skills, setSkills] = useState<TechSkill[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploading] = useState(false);
@@ -13,7 +13,10 @@ export function useStateSkills() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [formData, setFormData] = useState<Skill>({ imageUrl: "", title: "" });
+  const [formData, setFormData] = useState<TechSkill>({
+    imageUrl: "",
+    title: "",
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +39,7 @@ export function useStateSkills() {
   const fetchSkills = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/skills", {
+      const response = await fetch("/api/skills/tech", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
@@ -79,7 +82,7 @@ export function useStateSkills() {
         const fd = new FormData();
         fd.append("file", file);
 
-        const response = await fetch("/api/skills/upload", {
+        const response = await fetch("/api/skills/tech/upload", {
           method: "POST",
           body: fd,
         });
@@ -136,7 +139,7 @@ export function useStateSkills() {
       setIsSubmitting(true);
 
       if (isEditing) {
-        const response = await fetch(`/api/skills?id=${formData._id}`, {
+        const response = await fetch(`/api/skills/tech?id=${formData._id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -149,7 +152,7 @@ export function useStateSkills() {
         toast.success("Skill updated successfully");
       } else {
         const savePromises = pendingUploads.map(async (upload) => {
-          const response = await fetch("/api/skills", {
+          const response = await fetch("/api/skills/tech", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -183,7 +186,7 @@ export function useStateSkills() {
   const handleDelete = async (id: string) => {
     try {
       setIsDeleting(true);
-      const response = await fetch(`/api/skills?id=${id}`, {
+      const response = await fetch(`/api/skills/tech?id=${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete skill");
@@ -198,7 +201,7 @@ export function useStateSkills() {
     }
   };
 
-  const handleEdit = (data: Skill) => {
+  const handleEdit = (data: TechSkill) => {
     setFormData(data);
     setPendingUploads([
       {

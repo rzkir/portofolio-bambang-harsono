@@ -4,7 +4,7 @@ export const metadata = {
     description: "Modern dashboard for project management",
 }
 
-import SkillsLayout from '@/components/dashboard/skill/skill/SkillLayout'
+import SkillsLayout from '@/components/dashboard/skill/tech/TechSkillsLayout'
 
 export default function page() {
     return (

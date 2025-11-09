@@ -67,6 +67,16 @@ const data = {
       title: "Skills",
       url: "/dashboard/skills",
       icon: IconBrandHackerrank,
+      items: [
+        {
+          title: "Skills",
+          url: "/dashboard/skills",
+        },
+        {
+          title: "Tech Skills",
+          url: "/dashboard/skills/tech",
+        },
+      ],
     },
     {
       title: "Contacts",

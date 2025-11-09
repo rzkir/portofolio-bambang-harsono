@@ -1,3 +1,5 @@
+"use client"
+
 import Image from 'next/image'
 
 import Link from 'next/link'
@@ -5,6 +7,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 import { IconBrandInstagram, IconBrandTiktokFilled, IconBrandLinkedinFilled, IconBrandGithub } from "@tabler/icons-react"
+
+import { motion, type Variants } from 'framer-motion'
 
 const socialLink = [
     {
@@ -25,68 +29,113 @@ const socialLink = [
     },
 ]
 
+const container: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.15, when: 'beforeChildren' },
+    },
+}
+
+const item: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+}
+
+const itemLeft: Variants = {
+    hidden: { opacity: 0, x: -30 },
+    show: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+}
+
+const socialContainer: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.12 },
+    },
+}
+
 export default function Home({ homeData }: { homeData: HomeContent[] }) {
     const content = homeData?.[0]
     return (
-        <section className="relative min-h-screen flex items-center justify-center">
-            <div className="container">
-                <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 z-50">
-                    <div className="pl-24 space-y-6">
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+            <div className="container px-4">
+                <motion.div
+                    className="grid grid-cols-1 items-center gap-10 xl:grid-cols-2 z-50 "
+                    variants={container}
+                    initial="hidden"
+                    animate="show"
+                >
+                    <motion.div className="pl-0 lg:pl-12 space-y-6 text-left order-2 xl:order-1" variants={item}>
                         <div className="leading-[0.9]">
-                            <h1 className="text-4xl sm:text-6xl md:text-7xl max-w-[100px] font-extrabold tracking-tight">{content?.name}</h1>
+                            <motion.h1
+                                className="text-4xl sm:text-6xl md:text-7xl max-w-[400px] font-extrabold tracking-tight leading-tight wrap-break-word"
+                                variants={itemLeft}
+                            >
+                                {content?.name}
+                            </motion.h1>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center justify-start gap-3">
                             {
                                 content?.links?.map((link, idx) => (
-                                    <Link key={link.href} href={link.href}>
-                                        <Button size="lg" variant={idx === 1 ? "ghost" : "default"} className="gap-2">
-                                            <span className="inline-flex items-center">{link.label}</span>
-                                        </Button>
-                                    </Link>
+                                    <motion.div key={link.href} variants={item} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                                        <Link href={link.href}>
+                                            <Button size="lg" variant={idx === 1 ? "ghost" : "default"} className="gap-2">
+                                                <span className="inline-flex items-center">{link.label}</span>
+                                            </Button>
+                                        </Link>
+                                    </motion.div>
                                 ))
                             }
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="flex flex-col justify-center pl-48">
-                        <span className="mb-2 text-base uppercase tracking-wider opacity-60">*{content?.text}</span>
-                        <h2 className="mb-3 text-2xl font-semibold md:text-4xl">{content?.title}</h2>
-                        <p className="text-base opacity-80 max-w-[400px]">{content?.description}</p>
-                    </div>
-                </div>
+                    <motion.div className="flex flex-col justify-center mb-5 gap-2 pl-0 lg:pl-24 xl:pl-44 order-2 xl:order-1" variants={item}>
+                        <motion.span className="mb-2 text-base uppercase tracking-wider opacity-60" variants={item}>*{content?.text}</motion.span>
+                        <motion.h2 className="mb-3 text-2xl font-semibold md:text-4xl" variants={itemLeft}>{content?.title}</motion.h2>
+                        <motion.p className="text-base opacity-80 max-w-[400px]" variants={item}>{content?.description}</motion.p>
+                    </motion.div>
 
-                <div className='absolute bottom-10 max-w-7xl mx-auto left-0 right-0 flex justify-between z-50'>
-                    <Link href={`mailto:${content?.email}`} className='hover:text-primary hover:underline transition-al'>{content?.email}</Link>
+                    <motion.div className='relative order-1 xl:order-3 xl:absolute xl:bottom-0 xl:left-0 xl:right-0 -z-10' initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
+                        <motion.div className="relative mx-auto w-full md:w-[calc(100%-2rem)] overflow-hidden aspect-video opacity-70" initial={{ scale: 1.02 }} animate={{ scale: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
+                            <Image
+                                src={content?.image}
+                                alt={content?.name}
+                                fill
+                                sizes="100vw"
+                                priority
+                                className="object-contain object-center select-none pointer-events-none"
+                            />
+                        </motion.div>
+                    </motion.div>
+                </motion.div>
 
-                    <div className='flex gap-2'>
+                <motion.div
+                    className='relative xl:absolute xl:bottom-10 container left-0 right-0 px-0 xl:px-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 z-50'
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                    <Link href={`mailto:${content?.email}`} className='max-w-full truncate hover:text-primary hover:underline transition-all'>{content?.email}</Link>
+
+                    <motion.div className='flex gap-2' variants={socialContainer} initial="hidden" animate="show">
                         {
-                            socialLink.map((item, idx) => {
+                            socialLink.map((s, idx) => {
                                 return (
-                                    <Link key={idx} href={item.href}>
-                                        <Button size="default" className="gap-2 bg-card text-card-foreground hover:bg-card/90">
-                                            <item.icon className="w-10 h-10" />
-                                        </Button>
-                                    </Link>
+                                    <motion.div key={idx} variants={item} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                                        <Link href={s.href} target="_blank" rel="noopener noreferrer">
+                                            <Button size="default" className="gap-2 bg-card text-card-foreground hover:bg-card/90">
+                                                <s.icon className="w-6 h-6" />
+                                            </Button>
+                                        </Link>
+                                    </motion.div>
                                 )
                             })
                         }
-                    </div>
-                </div>
-            </div>
-            <div className='absolute bottom-0 left-0 right-0 -z-10'>
-                <div className="relative mx-auto w-[calc(100%-10rem)] overflow-hidden aspect-video">
-                    <Image
-                        src={content?.image}
-                        alt={content?.name}
-                        fill
-                        sizes="100vw"
-                        priority
-                        className="object-contain object-center select-none pointer-events-none"
-                    />
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
         </section>
     )
 }
-

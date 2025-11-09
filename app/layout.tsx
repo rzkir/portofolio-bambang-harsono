@@ -8,7 +8,7 @@ import { AuthProvider } from "@/utils/context/AuthContext";
 
 import { ThemeProvider } from "@/utils/context/ThemaContext"
 
-import { Toaster } from 'sonner'
+import Pathname from "@/hooks/Pathname"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,17 +42,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <Toaster
-              position="top-center"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: '#333',
-                  color: '#fff',
-                },
-              }}
-            />
-            {children}
+            <Pathname>{children}</Pathname>
           </AuthProvider>
         </ThemeProvider>
       </body>
