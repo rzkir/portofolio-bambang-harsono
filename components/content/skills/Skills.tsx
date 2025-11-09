@@ -12,7 +12,7 @@ import LetterGlitch from '@/components/ui/LetterGlitch';
 
 export default function TechSkills({ techSkillsData, skillsData }: { techSkillsData: TechSkill[]; skillsData: SkillContent[] }) {
     return (
-        <section className='py-10 xl:py-20'>
+        <section className='py-5 md:py-10 xl:py-20'>
             <div className="container space-y-10 xl:space-y-15 px-4 xl:px-10">
                 <div className="grid grid-cols-1 xl:grid-cols-2 items-center gap-5 xl:gap-20">
                     <div className="flex flex-col gap-2">
