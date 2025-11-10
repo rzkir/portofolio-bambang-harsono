@@ -10,8 +10,12 @@ import Footer from "@/components/layout/Footer";
 
 import { Toaster } from "sonner";
 
+import { useLoading } from "@/utils/context/LoadingContext";
+
 const Pathname = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
+    const { isInitialLoading, isLoading } = useLoading();
+    const isBusy = isInitialLoading || isLoading;
 
     const isAdminRoute =
         pathname?.includes("/signin") ||
@@ -34,9 +38,11 @@ const Pathname = ({ children }: { children: React.ReactNode }) => {
                     className: 'font-medium',
                 }}
             />
-            {!isAdminRoute && <Header />}
-            {children}
-            {!isAdminRoute && <Footer />}
+            <div className={isBusy ? "opacity-0 pointer-events-none select-none" : ""}>
+                {!isAdminRoute && <Header />}
+                {children}
+                {!isAdminRoute && <Footer />}
+            </div>
         </main>
     );
 };

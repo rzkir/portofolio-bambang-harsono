@@ -10,6 +10,10 @@ import { ThemeProvider } from "@/utils/context/ThemaContext"
 
 import Pathname from "@/hooks/Pathname"
 
+import { LoadingProvider } from "@/utils/context/LoadingContext"
+
+import LoadingOverlayWrapper from "@/hooks/LoadingOverlayWrapper"
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -42,7 +46,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <Pathname>{children}</Pathname>
+            <LoadingProvider>
+              <LoadingOverlayWrapper />
+              <Pathname>{children}</Pathname>
+            </LoadingProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

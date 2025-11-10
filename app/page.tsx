@@ -18,12 +18,16 @@ import Achviement from '@/components/content/achvievement/Achviement';
 
 import Contact from '@/components/content/contact/Contact';
 
+export const dynamic = 'force-dynamic'
+
+export const revalidate = 0
+
 export default async function HomePage() {
-  const homeData = await fetchHomeContents();
-  const techSkillData = await fetchTechSkillsContents();
-  const skillData = await fetchSkillsContents();
-  const projectData = await fetchProjects();
-  const achievementData = await fetchAchievementContents();
+  const homeData = await fetchHomeContents().catch(() => [] as HomeContent[]);
+  const techSkillData = await fetchTechSkillsContents().catch(() => [] as TechSkill[]);
+  const skillData = await fetchSkillsContents().catch(() => [] as SkillContent[]);
+  const projectData = await fetchProjects().catch(() => [] as projects[]);
+  const achievementData = await fetchAchievementContents().catch(() => [] as Achievement[]);
 
   return (
     <Fragment>

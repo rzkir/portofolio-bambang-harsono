@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation'
 
 import { motion, type Variants } from 'framer-motion'
 
+import { useLoading } from '@/utils/context/LoadingContext'
+
 const navLink = [
     {
         href: "/",
@@ -33,13 +35,15 @@ const navItem: Variants = {
 
 export default function Header() {
     const pathname = usePathname()
+    const { isInitialLoading, isLoading } = useLoading()
+    const isBusy = isInitialLoading || isLoading
     return (
         <header className='sticky top-10 z-50 px-2 md:px-0'>
             <div className="max-w-sm mx-auto">
                 <motion.div
                     className="flex items-center justify-between rounded-full border border-white/10 bg-white/5 dark:bg-black/20 backdrop-blur supports-backdrop-filter:bg-white/5 px-4 py-2 shadow-sm"
                     initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={isBusy ? { opacity: 0, y: -10 } : { opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                 >
                     <div className="flex items-center gap-3">
@@ -50,7 +54,7 @@ export default function Header() {
                         className="flex items-center gap-5 md:gap-10 text-base md:text-lg"
                         variants={navContainer}
                         initial="hidden"
-                        animate="show"
+                        animate={isBusy ? "hidden" : "show"}
                     >
                         {
                             navLink.map((link, idx) => {
