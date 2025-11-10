@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 
+import { notFound } from 'next/navigation'
+
 import ProjectDetailsContent from '@/components/content/projects/details/ProjectsLayout'
 
 import { generateMetadata as getProjectsMetadata } from '@/components/content/projects/details/meta/Metadata'
@@ -25,10 +27,16 @@ export default async function Page({ params }: Props) {
     let projectData: Awaited<ReturnType<typeof fetchProjectBySlug>> | null = null;
     try {
         resolvedParams = await params;
+        if (resolvedParams.slug.includes('.')) {
+            return notFound();
+        }
         projectData = await fetchProjectBySlug(resolvedParams.slug);
     } catch (error: unknown) {
         console.error('Error fetching project data:', error);
         resolvedParams = await params;
+        if (resolvedParams.slug.includes('.')) {
+            return notFound();
+        }
     }
 
     if (!projectData) {

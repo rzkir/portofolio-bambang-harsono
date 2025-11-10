@@ -29,16 +29,13 @@ export async function POST(request: Request) {
   try {
     await connectToDatabase();
     const body = await request.json();
-    console.log("Received data in POST:", body);
 
     const achievement = new Achievement(body);
     await achievement.save();
 
-    console.log("Created achievement:", achievement);
-    revalidatePath("/api/sitemap");
+    revalidatePath("/sitemap.xml");
     return NextResponse.json(achievement);
-  } catch (error) {
-    console.error("Create achievement error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to create achievement" },
       { status: 500 }
@@ -52,7 +49,6 @@ export async function PUT(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     const body = await request.json();
-    console.log("Received data in PUT:", body);
 
     const achievement = await Achievement.findByIdAndUpdate(
       id,
@@ -71,10 +67,9 @@ export async function PUT(request: Request) {
       );
     }
 
-    revalidatePath("/api/sitemap");
+    revalidatePath("/sitemap.xml");
     return NextResponse.json(achievement);
-  } catch (error) {
-    console.error("Update achievement error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to update achievement" },
       { status: 500 }
@@ -96,10 +91,9 @@ export async function DELETE(request: Request) {
       );
     }
 
-    revalidatePath("/api/sitemap");
+    revalidatePath("/sitemap.xml");
     return NextResponse.json({ message: "Achievement deleted successfully" });
-  } catch (error) {
-    console.error("Delete achievement error:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to delete achievement" },
       { status: 500 }

@@ -2,198 +2,173 @@
 
 import React from 'react'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { useLoading } from "@/utils/context/LoadingContext"
 
+import Image from 'next/image'
+
+import pesawat from "@/assets/pesawat.png"
+
+function CloudLinesCanvas({ className = "w-full h-40" }: { className?: string }) {
+    const canvasRef = React.useRef<HTMLCanvasElement | null>(null)
+    const rafRef = React.useRef<number | null>(null)
+    const stripesRef = React.useRef<Array<{ x: number; y: number; w: number; h: number; v: number; a: number; idx: number }>>([])
+
+    useEffect(() => {
+        const canvasEl = canvasRef.current
+        if (!canvasEl) return
+        const context = canvasEl.getContext('2d')
+        if (!context) return
+        const canvas = canvasEl
+        const ctx = context
+
+        const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1))
+
+        function resize() {
+            const { clientWidth, clientHeight } = canvas
+            canvas.width = Math.floor(clientWidth * DPR)
+            canvas.height = Math.floor(clientHeight * DPR)
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
+            const count = 6
+            const stripes: typeof stripesRef.current = []
+            const topOffset = 24
+            const bottomOffset = 8
+            const availableHeight = Math.max(0, clientHeight - topOffset - bottomOffset)
+            const segment = availableHeight / count
+            for (let i = 0; i < count; i++) {
+                const h = Math.random() * 4 + 1.5
+                const w = Math.random() * (clientWidth * 0.25) + clientWidth * 0.15
+                const maxX = Math.max(0, clientWidth - w)
+                const baseY = topOffset + i * segment
+                const yRange = Math.max(0, segment - h)
+                const y = Math.min(clientHeight - bottomOffset - h, baseY + Math.random() * yRange)
+                stripes.push({
+                    x: Math.random() * maxX,
+                    y,
+                    w,
+                    h,
+                    v: (Math.random() * 0.6 + 0.2) * 1.0,
+                    a: Math.random() * 0.2 + 0.2,
+                    idx: i,
+                })
+            }
+            stripesRef.current = stripes
+        }
+
+        function roundedRect(x: number, y: number, w: number, h: number, r: number) {
+            const rr = Math.min(r, h / 2, w / 2)
+            ctx.beginPath()
+            ctx.moveTo(x + rr, y)
+            ctx.lineTo(x + w - rr, y)
+            ctx.quadraticCurveTo(x + w, y, x + w, y + rr)
+            ctx.lineTo(x + w, y + h - rr)
+            ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h)
+            ctx.lineTo(x + rr, y + h)
+            ctx.quadraticCurveTo(x, y + h, x, y + h - rr)
+            ctx.lineTo(x, y + rr)
+            ctx.quadraticCurveTo(x, y, x + rr, y)
+            ctx.closePath()
+        }
+
+        function step() {
+            const { width, height } = canvas
+            ctx.clearRect(0, 0, width, height)
+            const w = canvas.clientWidth
+            const h = canvas.clientHeight
+
+            for (const s of stripesRef.current) {
+                s.x -= s.v
+                if (s.x < 0) {
+                    const count = stripesRef.current.length || 1
+                    const topOffset = 24
+                    const bottomOffset = 8
+                    const availableHeight = Math.max(0, h - topOffset - bottomOffset)
+                    const segment = availableHeight / count
+                    s.w = Math.random() * (w * 0.25) + w * 0.15
+                    s.h = Math.random() * 4 + 1.5
+                    s.v = (Math.random() * 0.6 + 0.2) * 1.0
+                    s.a = Math.random() * 0.2 + 0.2
+                    const baseY = topOffset + (s.idx ?? 0) * segment
+                    const yRange = Math.max(0, segment - s.h)
+                    s.y = Math.min(h - bottomOffset - s.h, baseY + Math.random() * yRange)
+                    s.x = Math.max(0, w - s.w)
+                }
+                ctx.globalAlpha = s.a
+                ctx.fillStyle = '#ffffff'
+                ctx.shadowColor = 'rgba(255,255,255,0.9)'
+                ctx.shadowBlur = 8
+                roundedRect(s.x, s.y, s.w, s.h, s.h / 2)
+                ctx.fill()
+            }
+
+            ctx.shadowBlur = 0
+            ctx.globalAlpha = 1
+            rafRef.current = requestAnimationFrame(step)
+        }
+
+        resize()
+        step()
+        const ro = new ResizeObserver(() => resize())
+        ro.observe(canvas)
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current)
+            ro.disconnect()
+        }
+    }, [])
+
+    return (
+        <div className={`relative ${className}`}>
+            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+        </div>
+    )
+}
+
 function MangcodingStyleSplash({
     isLoading,
-    message = "Loading...",
     className = "",
 }: MangcodingStyleSplashProps) {
-    // This component now only renders the loading overlay (no split-exit here)
     if (!isLoading) return null
 
     return (
         <div
             className={`fixed inset-0 z-50 flex items-center justify-center bg-background ${className}`}
         >
-            <div className="flex flex-col items-center space-y-8 max-w-md">
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <CloudLinesCanvas className="w-full h-full" />
+            </div>
+            <div className="relative z-10 flex flex-col items-center space-y-8 w-screen px-4">
                 {/* Logo/Brand Section */}
                 <motion.div
-                    initial={{ scale: 0.92, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, type: "spring", stiffness: 70 }}
                     className="text-center"
                 >
-                    {/* Main Logo/Brand */}
+                    {/* Airplane Image moving left-to-right */}
                     <motion.div
-                        className="text-4xl md:text-5xl font-bold mb-3 text-gray-300"
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.25, duration: 0.65, ease: "easeOut" }}
+                        className="w-screen overflow-hidden mb-3 h-[120px] relative"
                     >
-                        RIZKI RAMADHAN
-                    </motion.div>
-
-                    {/* Subtitle */}
-                    <motion.div
-                        className="text-lg text-gray-500"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.45, duration: 0.6, ease: "easeOut" }}
-                    >
-                        Fullstack Developer
-                    </motion.div>
-                </motion.div>
-
-                {/* Elegant Loading Animation */}
-                <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.55, duration: 0.6, ease: "easeOut" }}
-                    className="relative"
-                >
-                    {/* Outer Ring */}
-                    <motion.div
-                        className="w-20 h-20 border-2 border-gray-300 rounded-full"
-                        animate={{
-                            scale: [1, 1.05, 1],
-                            opacity: [0.2, 0.4, 0.2]
-                        }}
-                        transition={{
-                            duration: 2.8,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    />
-
-                    {/* Middle Ring */}
-                    <motion.div
-                        className="absolute inset-1 w-18 h-18 border-2 border-transparent border-t-gray-400 rounded-full"
-                        animate={{ rotate: 360 }}
-                        transition={{
-                            duration: 2.2,
-                            repeat: Infinity,
-                            ease: "linear"
-                        }}
-                    />
-
-                    {/* Inner Ring */}
-                    <motion.div
-                        className="absolute inset-2 w-16 h-16 border-2 border-transparent border-t-blue-500 rounded-full"
-                        animate={{ rotate: -360 }}
-                        transition={{
-                            duration: 1.7,
-                            repeat: Infinity,
-                            ease: "linear"
-                        }}
-                    />
-
-                    {/* Center Dot */}
-                    <motion.div
-                        className="absolute inset-0 flex items-center justify-center"
-                        animate={{
-                            scale: [1, 1.1, 1],
-                            opacity: [0.8, 1, 0.8]
-                        }}
-                        transition={{
-                            duration: 1.6,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    >
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                        <motion.div
+                            className="absolute top-1/2 -translate-y-1/2"
+                            initial={{ left: 0 }}
+                            animate={{ left: "calc(100vw - 240px)" }}
+                            transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+                        >
+                            <Image
+                                src={pesawat}
+                                alt="Airplane"
+                                width={300}
+                                height={150}
+                                priority
+                                className="opacity-90 select-none"
+                            />
+                        </motion.div>
                     </motion.div>
                 </motion.div>
 
-                {/* Loading Message */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.05, duration: 0.45, ease: "easeOut" }}
-                    className="text-center text-gray-600 text-sm"
-                >
-                    {message}
-                </motion.div>
+
             </div>
         </div>
-    )
-}
-
-function MessageSequence({
-    messages = ["HALLO", "PERKENALKAN SAYA"],
-    messageDurationsMs = [1000, 1000],
-    textEffect = "slide",
-    className = "",
-    transitionMs = 500,
-    onComplete,
-}: {
-    messages?: string[];
-    messageDurationsMs?: number | number[];
-    textEffect?: "fade" | "typewriter" | "slide";
-    className?: string;
-    transitionMs?: number;
-    onComplete?: () => void;
-}) {
-    const [index, setIndex] = useState(0)
-    const durationsArray = Array.isArray(messageDurationsMs)
-        ? messageDurationsMs
-        : Array(messages.length).fill(messageDurationsMs)
-
-    useEffect(() => {
-        if (index >= messages.length) return
-        const t = setTimeout(() => {
-            if (index + 1 < messages.length) {
-                setIndex(index + 1)
-            } else {
-                if (typeof onComplete === 'function') onComplete()
-            }
-        }, durationsArray[index] ?? 800)
-        return () => clearTimeout(t)
-    }, [index, messages.length, durationsArray, onComplete])
-
-    const effectVariants = {
-        fade: {
-            initial: { opacity: 0 },
-            animate: { opacity: 1 },
-            exit: { opacity: 0 }
-        },
-        slide: {
-            initial: { opacity: 0, y: 20 },
-            animate: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: -20 }
-        },
-        typewriter: {
-            initial: { opacity: 1 },
-            animate: { opacity: 1 },
-            exit: { opacity: 0 }
-        }
-    } as const
-
-    const current = messages[Math.min(index, messages.length - 1)]
-
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: transitionMs / 1000, ease: "easeInOut" }}
-            className={`fixed inset-0 z-50 flex items-center justify-center bg-background ${className}`}
-        >
-            <motion.div
-                key={index}
-                initial={effectVariants[textEffect].initial}
-                animate={effectVariants[textEffect].animate}
-                exit={effectVariants[textEffect].exit}
-                transition={{ duration: transitionMs / 1000, ease: "easeInOut" }}
-                className="text-3xl md:text-4xl font-semibold text-foreground"
-            >
-                {current}
-            </motion.div>
-        </motion.div>
     )
 }
 
@@ -204,26 +179,13 @@ function ControlledInitialLoader({
     loadingMessage: string;
     onDone: () => void;
 }) {
-    const [messagesDone, setMessagesDone] = useState(false)
     const { isInitialLoading } = useLoading()
 
     useEffect(() => {
-        if (!isInitialLoading && messagesDone) {
+        if (!isInitialLoading) {
             onDone()
         }
-    }, [isInitialLoading, messagesDone, onDone])
-
-    if (!messagesDone) {
-        return (
-            <MessageSequence
-                messages={["HALLO", "PERKENALKAN SAYA"]}
-                messageDurationsMs={[1200, 1200]}
-                textEffect="slide"
-                transitionMs={550}
-                onComplete={() => setMessagesDone(true)}
-            />
-        )
-    }
+    }, [isInitialLoading, onDone])
 
     return (
         <MangcodingStyleSplash

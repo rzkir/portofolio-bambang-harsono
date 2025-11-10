@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     // Create and save the document
     const newProjects = new Projects(projectsData);
     const savedProjects = await newProjects.save();
-    revalidatePath("/api/sitemap");
+    revalidatePath("/sitemap.xml");
     return NextResponse.json(savedProjects, { status: 201 });
   } catch (error) {
     if (error instanceof Error) {
@@ -131,7 +131,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    revalidatePath("/api/sitemap");
+    revalidatePath("/sitemap.xml");
     return NextResponse.json(updatedProjects);
   } catch {
     return NextResponse.json(
@@ -161,7 +161,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    revalidatePath("/api/sitemap");
+    revalidatePath("/sitemap.xml");
     return NextResponse.json({
       message: "Projects content deleted successfully",
     });

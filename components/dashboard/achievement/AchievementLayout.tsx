@@ -72,10 +72,6 @@ export default function AchievementLayout() {
                                     <span>Dashboard</span>
                                     <ChevronRight className="w-4 h-4 mx-1 text-muted-foreground" />
                                 </li>
-                                <li className='flex items-center hover:text-primary transition-colors'>
-                                    <span>Pages</span>
-                                    <ChevronRight className="w-4 h-4 mx-1 text-muted-foreground" />
-                                </li>
                                 <li className='flex items-center text-primary font-medium'>
                                     <span>Achievement</span>
                                 </li>

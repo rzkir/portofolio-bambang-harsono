@@ -1,4 +1,4 @@
-type LoadingType = "projects" | "articles" | "contacts" | "general";
+type LoadingType = "projects" | "contacts" | "general";
 
 interface LoadingContextType {
   isLoading: boolean;

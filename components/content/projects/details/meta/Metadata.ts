@@ -33,7 +33,7 @@ export async function generateMetadata({
   try {
     const resolvedParams = await params;
     const project = await getProducts(resolvedParams.slug);
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+    const BASE_URL = process.env.NEXT_PUBLIC_URL || "";
 
     if (!project) {
       return {
