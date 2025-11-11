@@ -69,7 +69,7 @@ export default function Home({ homeData }: { homeData: HomeContent[] }) {
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
             <div className="container px-4">
                 <motion.div
-                    className="grid grid-cols-1 items-center gap-10 xl:grid-cols-2 z-50 "
+                    className="grid grid-cols-1 items-center gap-10 xl:grid-cols-2"
                     variants={container}
                     initial="hidden"
                     animate={isBusy ? "hidden" : "show"}
@@ -120,7 +120,7 @@ export default function Home({ homeData }: { homeData: HomeContent[] }) {
                 </motion.div>
 
                 <motion.div
-                    className='relative xl:absolute xl:bottom-10 container left-0 right-0 px-0 xl:px-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 z-50'
+                    className='relative xl:absolute xl:bottom-10 container left-0 right-0 px-0 xl:px-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-3'
                     initial={{ opacity: 0, y: 10 }}
                     animate={isBusy ? { opacity: 0, y: 10 } : { opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}

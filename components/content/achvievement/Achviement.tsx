@@ -17,7 +17,7 @@ export default function Achviement({ achievementData }: { achievementData: Achie
     const startIndex = (currentPage - 1) * itemsPerPage
     const currentAchievements = achievementData.slice(startIndex, startIndex + itemsPerPage)
     return (
-        <section className='py-5 md:py-10 xl:py-20'>
+        <section className='py-5 md:py-10' id='achievements'>
             <div className='container space-y-10 xl:space-y-10 px-4 xl:px-10'>
                 <div className='flex flex-col gap-2 items-start justify-start'>
                     <motion.h3

@@ -10,6 +10,8 @@ import Achviement from '@/components/content/achvievement/Achviement';
 
 import Gallery from '@/components/content/gallery/Gallery';
 
+import Contact from "@/components/content/contact/Contact"
+
 import { fetchHomeContents } from '@/utils/fetching/FetchHome';
 
 import { fetchTechSkillsContents, fetchSkillsContents } from "@/utils/fetching/FetchTechSkills";
@@ -35,6 +37,7 @@ export default async function HomePage() {
       <Achviement achievementData={achievementData} />
       <Projects projectsData={projectsData} />
       <Gallery galleryData={galleryData} />
+      <Contact />
     </Fragment>
   );
 }

@@ -12,6 +12,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<UserSession | null>(null)
     const [loading, setLoading] = useState(true)
     const [userRole, setUserRole] = useState<UserRole | null>(null)
+    const [resetToken, setResetToken] = useState<string | null>(null)
     const router = useRouter()
 
     useEffect(() => {
@@ -24,44 +25,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setLoading(false)
     }, [])
-
-    const signUp = async (email: string, password: string, fullName: string) => {
-        try {
-            // Split full name into first and last name
-            const [firstName, ...lastNameParts] = fullName.split(' ')
-            const lastName = lastNameParts.join(' ')
-
-            const response = await fetch('/api/auth/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    firstName,
-                    lastName,
-                    role: 'user' // Explicitly set role as user
-                }),
-            })
-
-            const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to create account')
-            }
-
-            toast.success('Account created successfully! Redirecting to login...', {
-                duration: 2000,
-            })
-
-            // Redirect to signin page after successful signup
-            router.push('/signin')
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.'
-            toast.error(errorMessage)
-        }
-    }
 
     const signIn = async (email: string, password: string) => {
         try {
@@ -160,16 +123,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 throw new Error(data.error || 'Failed to send reset email')
             }
 
-            toast.success('Password reset link has been sent to your email!', {
+            toast.success('OTP has been sent to your email!', {
                 duration: 3000,
             })
 
-            setTimeout(() => {
-                router.push('/signin')
-            }, 3000)
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.'
             toast.error(errorMessage)
+            // Rethrow so callers (e.g., ForgetPassword) can stop navigation and show inline error
+            throw new Error(errorMessage)
         }
     }
 
@@ -206,15 +168,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const verifyOtp = async (token: string) => {
+        try {
+            const res = await fetch('/api/auth/verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token }),
+            })
+            const json = await res.json()
+            if (!res.ok) {
+                throw new Error(json.error || 'Invalid OTP')
+            }
+            setResetToken(token)
+            toast.success('OTP verified. Redirecting...')
+            router.push('/reset-password')
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'An unexpected error occurred'
+            toast.error(message)
+            throw new Error(message)
+        }
+    }
+
+    const finalizeResetPassword = async (newPassword: string) => {
+        try {
+            if (!resetToken) {
+                throw new Error('Missing token. Please verify OTP again.')
+            }
+            const res = await fetch('/api/auth/verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: resetToken, newPassword }),
+            })
+            const json = await res.json()
+            if (!res.ok) {
+                throw new Error(json.error || 'Reset password failed')
+            }
+            toast.success('Password reset successful. Redirecting...')
+            setResetToken(null)
+            router.push('/signin')
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'An unexpected error occurred'
+            toast.error(message)
+            throw new Error(message)
+        }
+    }
+
     const value = {
         user,
         loading,
         userRole,
-        signUp,
         signIn,
         signOut,
         resetPassword,
         changePassword,
+        resetToken,
+        setResetToken,
+        verifyOtp,
+        finalizeResetPassword,
     }
 
     return (

@@ -1,19 +1,6 @@
 import Link from 'next/link'
 
-const navLink = [
-    {
-        href: "/",
-        label: "Home",
-    },
-    {
-        href: "#projects",
-        label: "Projects",
-    },
-    {
-        href: "#contact",
-        label: "Contact",
-    },
-]
+import { navLink } from '@/components/layout/lib/Navigation'
 
 export default function Footer() {
     const year = new Date().getFullYear()

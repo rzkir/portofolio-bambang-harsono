@@ -5,15 +5,20 @@ import React from 'react'
 import { toast } from 'sonner'
 
 import { IconBrandTiktok, IconBrandInstagram, IconMail } from '@tabler/icons-react'
+
 import { Input } from '@/components/ui/input'
+
 import { Textarea } from '@/components/ui/textarea'
+
 import { Button } from '@/components/ui/button'
+
 import { Label } from '@/components/ui/label'
+
 import { motion, easeOut } from 'framer-motion'
 
 export default function Contact() {
     return (
-        <section className='py-5 md:py-10 xl:py-20' id='contact'>
+        <section className='py-5 md:py-10' id='contact'>
             <motion.div
                 className="container space-y-10 xl:space-y-10 px-4 xl:px-10"
                 initial={{ opacity: 0, y: 20 }}

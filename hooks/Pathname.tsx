@@ -20,6 +20,8 @@ const Pathname = ({ children }: { children: React.ReactNode }) => {
     const isAdminRoute =
         pathname?.includes("/signin") ||
         pathname?.includes("/forgot-password") ||
+        pathname?.includes("/verification") ||
+        pathname?.includes("/reset-password") ||
         pathname?.includes("/dashboard") || false;
 
     return (
