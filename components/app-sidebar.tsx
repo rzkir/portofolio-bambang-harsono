@@ -9,6 +9,7 @@ import {
   IconListDetails,
   IconUsers,
   IconBrandHackerrank,
+  IconPhoto,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -43,6 +44,11 @@ const data = {
       title: "Achievements",
       url: "/dashboard/achievements",
       icon: IconChartBar,
+    },
+    {
+      title: "Gallery",
+      url: "/dashboard/gallery",
+      icon: IconPhoto,
     },
     {
       title: "Projects",

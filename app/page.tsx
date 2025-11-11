@@ -16,6 +16,8 @@ import Projects from '@/components/content/projects/Projects';
 
 import Achviement from '@/components/content/achvievement/Achviement';
 
+import Gallery from '@/components/content/gallery/Gallery';
+
 import Contact from '@/components/content/contact/Contact';
 
 export const dynamic = 'force-dynamic'
@@ -35,6 +37,7 @@ export default async function HomePage() {
       <Skills techSkillsData={techSkillData} skillsData={skillData} />
       <Achviement achievementData={achievementData} />
       <Projects projectsData={projectData} />
+      <Gallery />
       <Contact />
     </Fragment>
   );

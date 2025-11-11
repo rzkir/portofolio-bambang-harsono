@@ -11,30 +11,23 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export async function SectionCards() {
-  async function fetchCount(path: string): Promise<number> {
-    try {
-      const res = await fetch(path, {
-        method: "GET",
-        headers: {
-          authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
-        },
-        cache: "no-store",
-      })
-      if (!res.ok) return 0
-      const data = await res.json()
-      return Array.isArray(data) ? data.length : 0
-    } catch {
-      return 0
-    }
-  }
+import { fetchProjects } from "@/utils/fetching/FetchProjects"
+import { fetchSkillsContents } from "@/utils/fetching/FetchTechSkills"
+import { fetchHomeContents } from "@/utils/fetching/FetchHome"
+import { fetchAchievementContents } from "@/utils/fetching/FetchAchievement"
 
-  const [projects, skills, home, achievements] = await Promise.all([
-    fetchCount("/api/projects"),
-    fetchCount("/api/skills"),
-    fetchCount("/api/home"),
-    fetchCount("/api/achievements"),
+export async function SectionCards() {
+  const [projectsData, skillsData, homeData, achievementsData] = await Promise.all([
+    fetchProjects().catch(() => [] as projects[]),
+    fetchSkillsContents().catch(() => [] as SkillContent[]),
+    fetchHomeContents().catch(() => [] as HomeContent[]),
+    fetchAchievementContents().catch(() => [] as Achievement[]),
   ])
+
+  const projects = projectsData.length
+  const skills = skillsData.length
+  const home = homeData.length
+  const achievements = achievementsData.length
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
